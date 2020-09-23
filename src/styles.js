@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     width: HEIGHT * 2,
     height: HEIGHT * 2,
     borderRadius: HEIGHT,
-    backgroundColor: '#eee',
+    backgroundColor: '#2224',
   },
   smallCircle: {
     position: 'absolute',
@@ -34,6 +34,8 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
   },
   point: {
+    width: 1,
+    height: 1,
     position: 'absolute',
     alignItems: 'center',
     justifyContent: 'center',
