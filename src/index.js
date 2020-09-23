@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Animated, View, ViewPropTypes } from 'react-native';
+import { Animated, TouchableOpacity, View, ViewPropTypes } from 'react-native';
 import PropTypes from 'prop-types';
 
 import { ANGLE, ANGLE_START, ITEMS_CIRCLE_RADIUS } from './constants';
@@ -25,10 +25,10 @@ class CircleMenu extends Component {
     const count = this.props.data.length;
     const step = ANGLE / (count - 1);
     const radians = (index * step + ANGLE_START) * (Math.PI / 180);
-    return ({
+    return {
       right: ITEMS_CIRCLE_RADIUS * Math.cos(radians),
       bottom: ITEMS_CIRCLE_RADIUS * Math.sin(radians),
-    });
+    };
   };
 
   _renderMenuItem = (item, index) => (
@@ -42,33 +42,29 @@ class CircleMenu extends Component {
 
   isMenuOpened = false;
 
-  toggle = (callback) => {
-    if (this.isMenuOpened) this.close(callback);
-    else this.open(callback);
+  toggle = () => {
+    if (this.isMenuOpened) this.close();
+    else this.open();
   };
 
-  open = (callback) => {
-    if (this.isMenuOpened) return callback && callback();
+  open = () => {
+    if (this.isMenuOpened) return;
+    this.isMenuOpened = true;
     Animated.timing(this.animation, {
       toValue: 1,
       duration: 400,
       useNativeDriver: true,
-    }).start(() => {
-      this.isMenuOpened = true;
-      if (callback) callback();
-    });
+    }).start();
   };
 
-  close = (callback) => {
-    if (!this.isMenuOpened) return callback && callback();
+  close = () => {
+    if (!this.isMenuOpened) return;
+    this.isMenuOpened = false;
     Animated.timing(this.animation, {
       toValue: 0,
       duration: 400,
       useNativeDriver: true,
-    }).start(() => {
-      this.isMenuOpened = false;
-      if (callback) callback();
-    });
+    }).start();
   };
 
   render() {
@@ -91,12 +87,22 @@ class CircleMenu extends Component {
 
     return (
       <View style={[styles.rootPoint, style]}>
-        <Animated.View style={[styles.background, { opacity: backgroundOpacity, transform: [{ scale: this.animation }] } ]} />
-        <Animated.View style={[styles.largeCircle, { transform: [{ scale: this.animation }, { rotate: largeCircleRotate }] }]}>
+        <Animated.View
+          style={[
+            styles.background,
+            { opacity: backgroundOpacity, transform: [{ scale: this.animation }] },
+          ]}
+        />
+        <Animated.View
+          style={[
+            styles.largeCircle,
+            { transform: [{ scale: this.animation }, { rotate: largeCircleRotate }] },
+          ]}
+        >
           <View style={styles.rootPoint}>{data.map(this._renderMenuItem)}</View>
         </Animated.View>
         <Animated.View style={[styles.smallCircle, { transform: [{ scale: smallCircleScale }] }]} />
-        {children}
+        <TouchableOpacity onPress={this.toggle}>{children}</TouchableOpacity>
       </View>
     );
   }
